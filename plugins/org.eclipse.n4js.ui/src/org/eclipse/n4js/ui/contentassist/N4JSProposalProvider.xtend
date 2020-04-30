@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *   NumberFour AG - Initial API and implementation
  */
@@ -77,6 +77,9 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 
 	@Inject
 	private N4JSLabelProvider labelProvider;
+	
+	@Inject
+	private N4JSMethodProposalHelper methodProposalHelper;
 
 	override completeRuleCall(RuleCall ruleCall, ContentAssistContext contentAssistContext,
 		ICompletionProposalAcceptor acceptor) {
@@ -168,7 +171,7 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 	 * </p><p>
 	 * TODO GH-1546 fix handling of qualified names in content assist
 	 * </p>
-	 *
+	 * 
 	 * @see AbstractJavaBasedContentProposalProvider
 	 */
 	override protected getProposalFactory(String ruleName, ContentAssistContext contentAssistContext) {
@@ -176,7 +179,7 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 		// prepare URIs of all members of built-in types Object and N4Object to avoid
 		// having to invoke #getEObjectOrProxy() on every IEObjectDescription
 		val builtInTypeScope = BuiltInTypeScope.get(contentAssistContext.resource.resourceSet);
-		val secondaryTypes = #[ builtInTypeScope.objectType, builtInTypeScope.n4ObjectType ];
+		val secondaryTypes = #[builtInTypeScope.objectType, builtInTypeScope.n4ObjectType];
 		val urisOfSecondaryMembers = secondaryTypes.flatMap[ownedMembers].map[EcoreUtil.getURI(it)].toSet;
 
 		val myConverter = new IQualifiedNameConverter.DefaultImpl() // provide a fake implementation using '.' as delimiter like Java
@@ -213,7 +216,7 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 					result.secondaryMember = urisOfSecondaryMembers.contains(candidate.EObjectURI);
 
 					val bracketInfo = computeProposalBracketInfo(candidate, contentAssistContext);
-					if (bracketInfo!==null) {
+					if (bracketInfo !== null) {
 						result.replacementSuffix = bracketInfo.brackets;
 						result.cursorOffset = bracketInfo.cursorOffset;
 					}
@@ -307,7 +310,7 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 	/**
 	 * If the element is an instance of {@link TClassifier} this method
 	 * returns a user-faced string description of the version information.
-	 *
+	 * 
 	 * Otherwise, this method returns an empty string.
 	 */
 	private def int getTypeVersion(EObject element) {
@@ -349,7 +352,8 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 		int cursorOffset;
 	}
 
-	def private ProposalBracketInfo computeProposalBracketInfo(IEObjectDescription proposedDescription, ContentAssistContext contentAssistContext) {
+	def private ProposalBracketInfo computeProposalBracketInfo(IEObjectDescription proposedDescription,
+		ContentAssistContext contentAssistContext) {
 
 		val eClass = proposedDescription.EClass;
 
@@ -358,5 +362,9 @@ class N4JSProposalProvider extends AbstractN4JSProposalProvider {
 		}
 
 		return null;
+	}
+	
+	override public void complete_LiteralOrComputedPropertyName(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		methodProposalHelper.complete_Method(model, ruleCall, context, acceptor);	
 	}
 }
