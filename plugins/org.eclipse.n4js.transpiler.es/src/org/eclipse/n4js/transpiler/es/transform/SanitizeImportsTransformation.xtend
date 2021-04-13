@@ -101,9 +101,9 @@ class SanitizeImportsTransformation extends Transformation {
 					// (1) containing module must be annotated with @@Global (2) element must be exported
 					if(N4JSLanguageUtils.isExported(orig)) {
 						val module = orig.containingModule;
-						if(AnnotationDefinition.GLOBAL.hasAnnotation(module)) {
+//						if(AnnotationDefinition.GLOBAL.hasAnnotation(module)) {
 							addNamedImport(ste,null);
-						}
+//						}
 					}
 				}
 			]

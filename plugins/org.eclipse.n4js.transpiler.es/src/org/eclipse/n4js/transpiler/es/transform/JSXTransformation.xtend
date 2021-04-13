@@ -32,6 +32,8 @@ import org.eclipse.n4js.transpiler.Transformation
 import org.eclipse.n4js.transpiler.im.IdentifierRef_IM
 import org.eclipse.n4js.transpiler.im.Script_IM
 import org.eclipse.n4js.transpiler.im.SymbolTableEntryOriginal
+import org.eclipse.n4js.ts.types.TypeAlias
+import org.eclipse.n4js.ts.utils.TypeUtils
 import org.eclipse.n4js.utils.ResourceType
 import org.eclipse.xtext.EcoreUtil2
 
@@ -250,6 +252,12 @@ class JSXTransformation extends Transformation {
 			val id = nameExpr.id_IM;
 			if(id===null) {
 				return _StringLiteral(nameExpr.idAsText);
+			}
+			val originalTarget = nameExpr.originalTargetOfRewiredTarget;
+			if (originalTarget instanceof TypeAlias) {
+				val actualDeclType = TypeUtils.getActualDeclaredType(originalTarget);
+				val actualDeclTypeSTE = getSymbolTableEntryOriginal(actualDeclType, true);
+				nameExpr.rewiredTarget = actualDeclTypeSTE;
 			}
 		}
 		return nameExpr;

@@ -134,7 +134,11 @@ public class N4JSTypeAliasValidator extends AbstractN4JSDeclarativeValidator {
 	public void checkAliasAsValue(IdentifierRef idRef) {
 		IdentifiableElement id = idRef.getId();
 		if (id != null && id instanceof Type && ((Type) id).isAlias()) {
-			addIssue(IssueCodes.getMessageForALI_TYPE_ALIAS_AS_VALUE(), idRef, IssueCodes.ALI_TYPE_ALIAS_AS_VALUE);
+			boolean isLegalSpecialCase = idRef
+					.eContainmentFeature() == N4JSPackage.Literals.JSX_ELEMENT_NAME__EXPRESSION;
+			if (!isLegalSpecialCase) {
+				addIssue(IssueCodes.getMessageForALI_TYPE_ALIAS_AS_VALUE(), idRef, IssueCodes.ALI_TYPE_ALIAS_AS_VALUE);
+			}
 		}
 	}
 
