@@ -12,17 +12,22 @@
 /* XPECT_SETUP org.eclipse.n4js.spec.tests.SpecXtTest END_SETUP  */
 
 
-// use case:
-// channeling an IterableN<> through a generic function
+// XPECT type of 'arr' --> Array3<int,string,int>
+const arr = [1, "2", 3];
 
 
-function <F,S> swap(param : Iterable2<F,S>) : Iterable2<S,F> {
-	var [f,s] = param;
-	// XPECT noerrors -->
-	return [s,f];
-}
+// XPECT type of 'ay' --> int
+// XPECT type of 'by' --> string
+// XPECT type of 'cy' --> int
+const [ay, by, cy] = arr;
 
+ay;by;cy;
 
-// XPECT type of 'atIndex0' --> int
-// XPECT type of 'atIndex1' --> string
-var [atIndex0,atIndex1] = swap(["",42]);
+// XPECT type of 'ax' --> int
+const ax = arr[0];
+// XPECT type of 'bx' --> string
+const bx = arr[1];
+// XPECT type of 'cx' --> int
+const cx = arr[2];
+
+ax;bx;cx;
